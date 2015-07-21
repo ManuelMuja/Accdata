@@ -1,0 +1,393 @@
+\documentclass [12pt] {amsart}
+\usepackage [italian] {babel}
+\usepackage [T1] {fontenc}
+\usepackage [utf8] {inputenc}
+
+\usepackage{geometry} % see geometry.pdf on how to lay out the page. There's lots.
+\geometry{a4paper} % or letter or a5paper or ... etc
+% \geometry{landscape} % rotated page geometry
+
+% See the ``Article customise'' template for come common customisations
+
+\usepackage{tikz}
+
+\title{Tecniche di riconoscimento e visualizzazione}
+%\subtitle{}
+\author{Manuel Iurissevich}
+\date{} % delete this line to display the current date
+
+%%% BEGIN DOCUMENT
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+%%% ACQUISIZIONE
+
+\section{Acquisizione}
+Le sequenze di esempio sono state registrate
+con l'accelerometro triassiale di un telefono cellulare {\smaller GT-S7501},
+grazie all'applicazione \emph{Accelerometer Monitor}.
+
+Consistono in 16 movimenti di sollevamento
+di cui i primi 8 sono considerati corretti,
+gli altri errati.
+I sollevamenti sono effettuati a gomito vincolato,
+quindi soltanto con l'avambraccio.
+Durante i movimenti ``giusti'' la traiettoria \`e mantenuta
+il pi\`u possibile dritta, mentre durante quelli ``sbagliati''
+si devia dall'asse verticale.
+
+Il cellulare \`e tenuto in mano in maniera
+che lo schermo guardi nella stessa direzione del palmo.
+Il polso \`e rigido.
+
+\begin{tikzpicture}
+\end{tikzpicture}
+
+\subsection{Specifiche tecniche}
+Forse a questo punto non sono granch\'e interessanti.
+
+\subsection{Il punto di vista biomeccanico}
+Fissata che sia la posizione della punta del gomito,
+l'avambraccio tre gradi di libert\`a di rotazione.
+Il polso pu`o ruotare in altri due modi,
+per un totale di cinque gradi di libert\`a.
+
+In questa dimostrazione si cerca di sopprimere
+i movimenti del polso e la rotazione sull'asse dell'avambraccio.
+Fatto questo, si considera corretta l'esecuzione del movimento
+quando non c'\`e variazione dell'angolo longitudinale
+ma solo di quello latitudinale.\footnote{\Huge{Terminologia!!}}
+
+
+\subsection{Elaborazione preliminare}
+I dati grezzi in uscita dal sw di acquisizione
+devono subire un trattamento
+prima di passare attraverso qualunque algoritmo di classificazione.
+
+\paragraph{Smoothing}
+Si fa innanzitutto passare una media mobile per togliere un po' di rumore.
+Buoni risultati con un filtro lungo 13 campioni.
+Il filtro \`e applicato ``a mano'' con un ciclo $for$
+e non con l'apposito comando $signal:filter$
+perch'e contemporaneamente si esegue un sottocampionamento
+di fattore 3.
+Si potrebbe ovviamente fare prima il filtraggio con $filter$
+e comunque sottocampionare dopo
+e credo anzi sia consigliato.
+
+\paragraph{Suddivisione}
+La seconda fase consiste nella divisione della registrazione
+(che contiene tutti e 16 gli esempi)
+in esempi separati.
+Questo \`e fatto sia utilizzando tecniche software
+che cercando le divisioni a mano.
+Si fa in modo che tutte le sequenze abbiano una lunghezza di 64 campioni
+ma non si bada al fatto che inizino tutte allo stesso istante.
+Si calcolano quindi alcune caratteristiche statistiche dei dati acquisiti.
+Basandoci su \emph{un lavoro precedente},
+riteniamo che valga la pena concentrarsi su media e varianza.
+
+\paragraph{Visualizzazione}
+Siamo passati quindi dal rappresentare i dati
+in uno spazio a $64\times3=192$ dimesioni
+ad uno di $2*\times3=6$ dimensioni.
+Per la visualizzazione dei dati in questa fase
+si pu`o ricorrere alle proiezioni ortogonali
+rappresentando due coordinate per volta
+(per un totale di $\sum_{n=1}^{6-1} n =15$ grafici in 2D),
+oppure ricorrere a tecniche di scalaggio multidimensionale
+con il comando $statistics:mdscsale$
+al quale diamo in pasto le distanze (euclidee) trai punti in 6D.
+Abbiamo seguito quest'ultima via.
+
+%%% TECNICHE CLASSICHE
+\section{Tecniche classiche}
+K-mean clustering, apprendimento competitivo, neurone.
+\subsection{K-mean clustering}
+Tecnica di classificazione non supervisionata
+(non bisogna etichettare i dati prima di far partire l'algoritmo)
+che consiste in
+\begin{enumerate}
+  \item{gettare pi\`u o meno casualmente \emph{K centroidi} nello spazio}
+  \item{etichettare ogni punto con l'ID del centroide pi\`u vicino}
+  \item{spostare ogni centroide sulla media dei punti a esso assegnati}
+  \item{ripetere dal punto 2 finch'e i centroidi non sono quasi fermi}
+\end{enumerate}
+
+\paragraph{Con Matlab}
+Il toolbox $statistics$ mette a disposizione il comando $kmeans$ che,
+fornitigli i punti e il numero di gruppi desiderati,
+restituisce le etichette per ogni punto e le coordinate dei centroidi.
+Altro scalaggio per visualizzare i dati in 2D.
+
+\paragraph{Crossvalidazione}
+Il numero di centri $K$ \`e fissato a priori
+ma non sempre si hanno buoni motivi per scegliere un valore pittosto che un altro.
+Per trovare il $K$ migliore si fa di solito correre l'algoritmo pi\`u volte,
+ogni volta cambiando il $K$ e valutando le prestazioni.
+L'insieme dei dati dev'essere preventivamente diviso
+in un gruppo di addestramento e un gruppo di test, o validazione.
+
+
+\subsection{Apprendimento competitivo}
+Secondo me concettualmente simili al \linebreak\mbox{K-means},
+\`e l'apprendimento competitivo.
+(\emph{Attenzione!} Non sono la stessa cosa e non portano agli stessi risultati)
+
+Consiste nello strutturare una rete di $K$ neuroni
+ciascuno con il suo vettore dei pesi
+inizialmente casuale ma sempre di modulo 1.
+In questo modo a ogni neurone \`e assegnato un versore
+in un qualche spazio.
+I neuroni sono tra loro collegati tramite linee di segnali inibitori.
+Quando le coordinate di un punto di addestramento
+sono date in pasto alla rete,
+ci sar\`a un neurone che indica in quella direzione,
+o per lo meno un neurone sar\`a pi\`u vicino degli altri:
+questo \`e l'unico neurone autorizzato ad apprendere
+e modificher\`a i suoi pesi in maniera da avvicinarsi
+un po' alla direzione del punto.
+L'apprendimento degli altri neuroni \`e inibito.
+
+Questa tecnica richiede ulteriori pretrattamenti dei dati in ingresso
+in maniera che siano distribuiti (meglio possibile)
+su una sfera centrata nell'origine.
+
+
+\subsection{Il percettrone classico}
+Il percettrone cerca sempre di dividere l'universo
+mettendoci in mezzo un piano.
+Tale piano \`e individuato dai pesi del neurone
+e da una soglia, che in pratica \`e un ulteriore sinapsi
+con l'ingresso sempre a 1 (o -1, se si preferisce).
+La funzione di attivazione pu`o essere tranquillamente la funzione segno,
+senza scomodare esponenziali o tangenti iperboliche.
+Tanto c'\`e un solo neurone e non dobbiamo fare backpropagation.
+
+Fatto sta che per ogni vettore d'ingresso
+il percettrone calcola 
+\begin{equation}
+	y = sgn \left(x \cdot w - \theta \right);
+	\label{eq:perceptron}
+\end{equation}
+in fase di addestramento, si confronta l'uscita calcolata
+con quella desiderata: $e=d-y$
+e si correggono i pesi di un fattore $\Delta w = a e x$,
+dove $a \in [0, 1]$ \`e il fattore di apprendimento.
+Analogo per la soglia.
+
+Ad apprendimento concluso i pesi non variano pi\`u
+ed il piano di separazione \`e finalmente individuato
+dall'equazione \ref{eq:perceptron}, posta uguale a 0.
+
+
+
+
+
+\subsection{La selezione delle caratteristiche}
+Nonostante l'applicazione richieda di classificare,
+uno degli aspetti pi\`u interessanti di tutto il discorso
+\`e valutare le caratteristiche importanti che permettano
+di classificare le sequenze con la massima efficacia.
+Ridurre insomma al minimo le variabili e concentrarsi
+su quelle che varamente portano informazione.
+
+\begin{itemize}
+	\item{quanto \`e utile questa caratteristica a farmi classificare i dati?}
+	\item{quanto sono mescolati i dati lungo questa caratteristica (vista come coordinata)}
+	\item{che \`e il contrario di ``quanto sono ordinati?''}
+	\item{quanto mi \`e utile sapere che (su questa caratteristica) un dato viene prima di un altro?}
+\end{itemize}
+
+\paragraph{In una prima fase} si ordinano i valori secondo la caratteristica
+e moltiplica le etichette ordinate per le etichette non riordinate.
+La somma risultante (prod.scalare) d\`a l'importanza della caratteristica.
+
+\paragraph{Il neuroncino} Ha un solo peso $w=1$
+e deve soltanto variare la soglia.
+
+\paragraph{A questo punto} Si possono dedicare attenzioni
+soltanto alle caratteristiche pi\`u importanti,
+oppure ``scartarle'' e concentrarsi su relazioni pi\`u sottili.
+Bisogna fate poi il discorso delle caratteristiche dipendenti:
+se due caratteristiche sono dipendenti,
+non occorre considerarle entrambe.
+
+\section{Tecniche moderne}
+Dopo esserci concentrati sulle tecniche vintage,
+consideriamo quelle in voga negli ultimi vent'anni.
+Si attribuisce a un certo Vapnik l'applicazione fruttuosa
+del kernel all'apprendimento automatico (1992).
+
+\subsection{Il Kernel}
+Prende il nome da qualche teoria matematica avanzata.
+Per capirsi
+\begin{itemize}
+	\item{il prodotto scalare \`e un kernel e}
+	\item{il kernel \`e un prodotto scalare.}
+\end{itemize}
+
+Dalla prima affermazione si pu`o intuire che,
+presi due vettori, due elementi di uno spazio
+in cui sia definito un prodotto scalare.
+il kernel sar\`a un'estensione del prodotto scalare consueto.
+
+La seconda introduce l'idea
+di portarsi in un comodo spazio dotato di prodotto scalare
+per poi applicare il kernel.
+
+Formalmente:
+\begin {equation}
+  \label {eq:kernel}
+  k = \langle \Phi(x_1), \Phi(x_2) \rangle
+\end{equation}
+dove $\Phi(x)$ \`e una mappa -se si vuole- non lineare
+che porta i generici elementi $x$
+in uno spazio dotato di prodotto scalare.
+NB: Gli elementi originali possono quindi non essere neanche vettori.
+Oss: Praticamente si stanno estraendo le caratteristiche.
+
+\subsection{Il kernel e l'apprendimento automatico}
+Rimanendo nell'ambito della classificazione binaria
+la funzione discriminante \`e
+\begin{equation}
+	\label{eq:discriminante}
+	y_n = sgn \left(\langle w, \Phi(x_n) \rangle + b \right)
+\end{equation}
+ma si definiscono i pesi come
+\begin{equation}
+  \label{eq:pesikernel}
+  w = \sum_i y_i \alpha_i \Phi(x_i)
+\end{equation}
+con $\alpha_i$ che come si chiama?
+Sostituendo la \ref{eq:pesikernel} nella \ref{eq:discriminante}
+si ottiene
+\begin{align}
+  y_n &= sgn \left(\sum_i y_i \alpha_i \langle \phi_i,\phi_n \rangle + b \right) \\
+  &= sgn \left(\sum_i y_i \alpha_i k(x_i,x_n) + b \right)
+\end{align}
+
+\subsection {Il kernel perceptron}
+(Tratto da un articolo dell'Universit\`a di Trento).
+L'algoritmo di apprendimento \`e molto simile
+a quello del percettrone classico.
+La differenza sta nel calcolo della funzione (vedi eq. precedente)
+e nell'aggiornamento dei pesi:
+gli $\alpha_i$ sono incrementati ogni volta che
+il neurone sbaglia la previsione su un $x_i$.
+
+\subsection {Simple Pattern Recognition Algorithm ({\smaller SPRA})}
+Schoelkopf e Smola propongono un semplice algoritmo di classificazione
+introduttivo alle Macchine a Vettori di Supporto ({\smaller SVM}).
+
+Non si fa altro che prendere i punti medi delle due classi ($c_1$ e $c_2$),
+prendere il vettore differenza trai due $w=c_1-c_2$
+il loro punto medio ($c=(c1+c2)/2$).
+
+Ora ogni altro punto di classe ignota
+pu\`o essere etichettato con
+$y =sgn \left( \langle \boldsymbol{x-c}, \boldsymbol{w} \rangle \right)$.
+
+\paragraph{Osservazioni}
+
+
+\subsection {Macchine a vettori di supporto ({\smaller SVM})}
+Sono algoritmi che usano l'espediente del kernel
+per mappare le sequenze in degli spazi comodi
+(tipicamente con molte dimensioni pi\`u)
+dove trovare il piano di separazione che massimizza il margine.
+Nello spazio di partenza la separazione pu\`o assumere le forme pi\`u diverse
+(dipende dalla mappa non lineare).
+
+Il problema \`e posto nei termini di minimizzazione della lagrangiana
+\begin{equation}
+  \label{lagrangiana}
+  L_P = lagrangiana
+\end{equation}
+o massimizzazione della sua duale
+\begin{align}
+  \label{lagrangiana}
+  L_D &= \sum_i \alpha_i - \frac{1}{2} \sum_i \sum_j \alpha_i \,\alpha_j \,y_i \,y_j \,k(\boldsymbol{x_i}, \boldsymbol{x_j}) \\
+  \langle \boldsymbol{\alpha}, \boldsymbol{y} \rangle &= 0 \\
+  \alpha_i &\geq 0
+\end{align}
+
+\subsection{Prova di ottimizzazione}
+Il progetto {\emph{ottimizzazione}} \`e una dimostrazione della funzione
+\(fimncon\) di ottimizzazione vincolata.
+
+\par
+Questa strumento prende in ingresso
+la funzione obiettivo e la funzione supporto,
+vale a dire la funzione da minimizzare e i vincoli non lineari da rispettare;
+il punto di partenza;
+gli eventuali vincoli lineari di uguaglianza e disuguaglianza.
+
+
+\subsection {I consigli di Chang e Lin}
+I creatori della libreria $libsvm$ danno alcuni suggerimenti
+per iniziare presto ad avere risultati soddifacienti con le {\smaller SVM}.
+\begin{itemize}
+  \item {trasformare i dati nel formato di un pacchetto svm}
+  \item {eseguire uno scalaggio semplice dei dati}
+  \item {considerare i kernel a base radiale (gaussiani)}
+  \item {crossvalidare per trovare i $C$ e $\gamma$ migliori}
+  \item {usare questi $C$ e $\gamma$ per addestrare sull'intero insieme di adestramento}
+  \item {testare}
+\end{itemize}
+
+\paragraph {$C$ e $\gamma$}
+Il parametro $C$ \`e il costo.
+Serve a rendere pi\`u laschi i vincoli dell'ottimizzazione
+\begin{equation}
+  0 \leq \alpha_i \leq C
+  \label{vincoliC}
+\end{equation}
+Necessario quando le due classi {\bfseries non} sono separabili,
+\`e utile quando le classi sono separabili in maniera "forzata"
+cio\`e l'insieme di addestramento le mostra separabili
+ma dagli insiemi di validazione o test appare che non lo sono.
+Il parametro $\gamma$ fa riferimento alla formula del kernel a base radiale ({\smaller RBFK})
+\begin{equation}
+  k(\boldsymbol{x_1}, \boldsymbol{x_1}) = 
+    \gamma\,||\boldsymbol{x_1}-\boldsymbol{x_2}||^2
+  \label{rbfk}
+\end{equation}
+ma non \`e utilizzato nell'esempio
+perch\'e invece del kernel a base radiale
+se ne usa uno polinomiale di grado $2$.
+
+\subsection {Esempio di {\smaller SVM}}
+Nell'esempio $svmxor$
+\footnote{\, Il nome deriva dal fatto
+che il primo problema posto alla macchina
+era proprio uno {\smaller XOR}}
+si fanno quindi due passate con una griglia di 5 elementi,
+prima con $C\in[10^{-5}, \dots, 10^{5}]$
+poi intorno al $C$ che si \`e mostrato migliore.
+
+Si chiama quindi la funzione di addestramento $my\_svmtrain$
+che per ogni $C$ chiama a sua volta $fmincon$.
+Terminato l'addestrameto si calcola sull'insieme di validazione
+la percentuale di previsioni esatte,
+indicativa della bont\`a del parametro $C$ usato in quel ciclo.
+
+Si fa girare un'altra volta l'apprendimento con il $C$ migliore trovato
+e si collauda il tutto sull'insieme di test.
+Il resto del documento \`e dedicato alla visualizzazione
+dei dati e del processo di apprendimento.
+
+Si \`e usato l'insieme di dati "Iris".
+
+
+
+
+
+
+\end{document}
+
+
+
