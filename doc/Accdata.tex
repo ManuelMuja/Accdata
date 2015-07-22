@@ -1,4 +1,4 @@
-\documentclass [12pt] {amsart}
+\documentclass [10pt,  twoside] {amsart}
 \usepackage [italian] {babel}
 \usepackage [T1] {fontenc}
 \usepackage [utf8] {inputenc}
@@ -72,7 +72,7 @@ Si fa innanzitutto passare una media mobile per togliere un po' di rumore.
 Buoni risultati con un filtro lungo 13 campioni.
 Il filtro \`e applicato ``a mano'' con un ciclo $for$
 e non con l'apposito comando $signal:filter$
-perch'e contemporaneamente si esegue un sottocampionamento
+perch\'e contemporaneamente si esegue un sottocampionamento
 di fattore 3.
 Si potrebbe ovviamente fare prima il filtraggio con $filter$
 e comunque sottocampionare dopo
@@ -114,7 +114,7 @@ che consiste in
   \item{gettare pi\`u o meno casualmente \emph{K centroidi} nello spazio}
   \item{etichettare ogni punto con l'ID del centroide pi\`u vicino}
   \item{spostare ogni centroide sulla media dei punti a esso assegnati}
-  \item{ripetere dal punto 2 finch'e i centroidi non sono quasi fermi}
+  \item{ripetere dal punto 2 finch\'e i centroidi non sono quasi fermi}
 \end{enumerate}
 
 \paragraph{Con Matlab}
@@ -133,7 +133,7 @@ in un gruppo di addestramento e un gruppo di test, o validazione.
 
 
 \subsection{Apprendimento competitivo}
-Secondo me concettualmente simili al \linebreak\mbox{K-means},
+Secondo me concettualmente simile al \linebreak\mbox{K-means},
 \`e l'apprendimento competitivo.
 (\emph{Attenzione!} Non sono la stessa cosa e non portano agli stessi risultati)
 
@@ -175,7 +175,7 @@ il percettrone calcola
 \end{equation}
 in fase di addestramento, si confronta l'uscita calcolata
 con quella desiderata: $e=d-y$
-e si correggono i pesi di un fattore $\Delta w = a e x$,
+e si correggono i pesi di un fattore $\Delta w = a\,e\,x$,
 dove $a \in [0, 1]$ \`e il fattore di apprendimento.
 Analogo per la soglia.
 
@@ -247,8 +247,10 @@ Formalmente:
 dove $\Phi(x)$ \`e una mappa -se si vuole- non lineare
 che porta i generici elementi $x$
 in uno spazio dotato di prodotto scalare.
-NB: Gli elementi originali possono quindi non essere neanche vettori.
-Oss: Praticamente si stanno estraendo le caratteristiche.
+
+NB$_{1}$: Gli elementi originali possono quindi non essere neanche vettori.\par
+NB$_{2}$: In generale è più semplice scrivere la funzione kernel piuttosto che la mappa.\par
+Oss: Praticamente si stanno estraendo le caratteristiche.\par
 
 \subsection{Il kernel e l'apprendimento automatico}
 Rimanendo nell'ambito della classificazione binaria
@@ -364,7 +366,7 @@ se ne usa uno polinomiale di grado $2$.
 Nell'esempio $svmxor$
 \footnote{\, Il nome deriva dal fatto
 che il primo problema posto alla macchina
-era proprio uno {\smaller XOR}}
+era uno {\smaller XOR}}
 si fanno quindi due passate con una griglia di 5 elementi,
 prima con $C\in[10^{-5}, \dots, 10^{5}]$
 poi intorno al $C$ che si \`e mostrato migliore.
