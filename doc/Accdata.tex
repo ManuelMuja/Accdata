@@ -10,8 +10,11 @@
 
 % See the ``Article customise'' template for come common customisations
 
-\usepackage {graphicx}
-%\usepackage{tikz}
+\usepackage{cite, graphicx, subfigure, amsmath}
+\usepackage{tikz}
+\usepackage{sansmath}
+
+\usepackage{hyperref}
 
 \title{Tecniche di riconoscimento e visualizzazione}
 %\subtitle{}
@@ -46,24 +49,136 @@ Il cellulare \`e tenuto in mano in maniera
 che lo schermo guardi nella stessa direzione del palmo.
 Il polso \`e rigido.
 
-%\begin{tikzpicture}
-%\end{tikzpicture}
+\begin{figure}
+\centering
+\begin{tikzpicture}[%
+molla/.style={decorate,decoration={snake,post length=5,amplitude=5,pre length=5,segment length=5}, thick},
+thick%
+]
+\sffamily \sansmath
+%	\draw [help lines] (0, 0) grid (8, 5);
+	
+	\draw (8, 0) -- (0, 0);
+	
+	\draw (0, 3) circle (0.3)
+		node at (0, 3) {$\bullet$};
+	\node [] at (-.8, 3) {spalla};
+	\draw (0, 3) -- (4, 0);
+	\draw (4, 0) circle (0.3)
+		node {$\bullet$};
+	\node [] at (4, 0.8) {gomito};
+	\draw (4, 0) -- (7, 2);
+	\draw (7, 2) circle (0.3)
+		node {$\bullet$};
+	\draw (7, 2) -- (8, 3)
+		node [pos=0.5, right] {mano};
+	\draw (7.2, 2.4) -- (7.9, 3.1)
+		node [pos=0.5, left] {cell};
+
+  \end{tikzpicture}
+  \caption{Schema approssimativo.}
+  \label{fig:pupolo}
+\end{figure}
 
 \subsection{Specifiche tecniche}
 Forse a questo punto non sono granch\'e interessanti.
 
 \subsection{Il punto di vista biomeccanico}
 Fissata che sia la posizione della punta del gomito,
-l'avambraccio tre gradi di libert\`a di rotazione.
-Il polso pu`o ruotare in altri due modi,
+l'avambraccio ha tre gradi di libert\`a di rotazione.
+Il polso pu\`o ruotare in altri due modi,
 per un totale di cinque gradi di libert\`a.
 
 In questa dimostrazione si cerca di sopprimere
 i movimenti del polso e la rotazione sull'asse dell'avambraccio.
 Fatto questo, si considera corretta l'esecuzione del movimento
 quando non c'\`e variazione dell'angolo longitudinale
-ma solo di quello latitudinale.\footnote{\Huge{Terminologia!!}}
+ma solo di quello latitudinale (vedi \textsc{Figura \ref{fig:biomecc}}).
+\footnote{\Huge{Terminologia!!}}
 
+Utilizzando i formalismi della robotica
+\footnote{\cite{deluca}}
+si pu\`o scrivere la \textsc{Tabella \ref{tab:robo}}.
+Il sistema di riferimento $S_{3}$ \`e quello del telefonino.
+In realt\`a sarebbe pi\`u corretto scrivere il sistema $S_{0}$
+con l'asse $z$ verso l'alto e l'asse $y$ entrante foglio
+(pi\`u una questione di convenzioni che di comodit\`a),
+oppure con parallelo a $S_{3}$ in posizione di riposo
+(con $x$ uscente dal foglio).
+
+Secondo questa notazione
+\begin{itemize}
+	\item [$\theta_{1}$] {$\in [0, \pi/2]$ \`e l'unico parametro che si vuole variare}
+	\item [$\theta_{2}$] {$\in [-\pi/2, \pi/2]$ dovrebbe rimanere fisso, meglio se nullo}
+	\item [$\alpha_{1}$] la rotazione attorno a $y_{1}$ \`e il principale errore da individuare
+	\item {altri parametri si considerano nulli o costanti}
+\end{itemize}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}[%
+molla/.style={decorate,decoration={snake,post length=5,amplitude=5,pre length=5,segment length=5}, thick},
+thick%
+]
+\sffamily \sansmath
+%	\draw [help lines] (0, 0) grid (8, 8);
+	
+	\draw (0:0) -- (0:5);
+	
+%	\draw (0, 3) circle (0.3)
+%		node {$\bullet$};
+%	\draw (0, 3) -- (4, 0);
+	\draw (0, 0) circle (0.3)
+		node {$\bullet$};
+	\draw (30:5) circle (0.3)
+		node {$\bullet$};
+		
+	\draw (0, 0) -- (30:5);
+	\draw (30:5) -- ++(45:2);
+	\draw (4.5, 3) -- ++(45:1.5);
+
+	\node [] at (25:5.3) {P};
+	\node [] at (-0.5, 0) {G};
+	\node [] at (5.0, 4) {C};
+
+	\draw [->, dotted, thin] (0:5) -- (0:8)
+		node [pos=1, above] {$x_{0}$};
+	\draw [->, dotted, thin] (90:0) -- ++(90:3)
+		node [pos=1, left] {$y_{0}$};
+
+	\draw [->, dotted, thin] (30:5) -- ++(30:3)
+		node [pos=1, above] {$x_{1}$};
+	\draw [->, dotted, thin] (0:0) -- (30+90:3)
+		node [pos=1, left] {$y_{1}$};
+
+	\draw [->, dotted, thin] (30:5) -- ++(45:5)
+		node [pos=1, above] {$x_{2}$};
+	\draw [->, dotted, thin] (30:5) -- ++(45+90:3)
+		node [pos=1, left] {$y_{2}$};
+
+	\draw [->, dotted, thin] (4.5, 3) -- ++(45:3)
+		node [pos=1, above] {$y_{3}$};
+	\draw [->, dotted, thin] (5.0, 3.5) -- ++(45+90:3)
+		node [pos=1, left] {$z_{3}$};
+
+  \end{tikzpicture}
+  \caption{Sistemi di riferimento.}
+  \label{fig:biomecc}
+\end{figure}
+
+\begin{table}
+\caption{Parametri della catena cinematica}
+\label{tab:robo}
+\begin{tabular} {l c c c c}
+	\hline
+	$i$ & $\alpha_{i}$ & $a_{i}$ & $d_{i}$ & $\theta_{i}$\\
+	\hline
+	1 & 0 & 0 & 0 & $\theta_{1}$ \\
+	2 & 0 & $\bar{GP}$ & 0 & $\theta_{2}$ \\
+	3 & $\pi/2$ & $\bar{PC}$ & 0 & $\pi/2$ \\
+	\hline
+\end{tabular}
+\end{table}
 
 \subsection{Elaborazione preliminare}
 I dati grezzi in uscita dal sw di acquisizione
@@ -167,7 +282,8 @@ Tale piano \`e individuato dai pesi del neurone
 e da una soglia, che in pratica \`e un ulteriore sinapsi
 con l'ingresso sempre a 1 (o -1, se si preferisce).
 La funzione di attivazione pu`o essere tranquillamente la funzione segno,
-senza scomodare esponenziali o tangenti iperboliche.
+senza scomodare esponenziali o tangenti iperboliche
+(Equazione \ref{eq>perceptron}).
 Tanto c'\`e un solo neurone e non dobbiamo fare backpropagation.
 
 Fatto sta che per ogni vettore d'ingresso
@@ -273,6 +389,7 @@ si ottiene
 \begin{align}
   y_n &= sgn \left(\sum_i y_i \alpha_i \langle \phi_i,\phi_n \rangle + b \right) \\
   &= sgn \left(\sum_i y_i \alpha_i k(x_i,x_n) + b \right)
+  \label{eq:uscitakernel}
 \end{align}
 
 \subsection {Il kernel perceptron}
@@ -309,12 +426,12 @@ Nello spazio di partenza la separazione pu\`o assumere le forme pi\`u diverse
 
 Il problema \`e posto nei termini di minimizzazione della lagrangiana
 \begin{equation}
-  \label{lagrangiana}
-  L_P = lagrangiana
+    L_P = lagrangiana
+  \label{eq:lagrangiana}
 \end{equation}
 o massimizzazione della sua duale
 \begin{align}
-  \label{lagrangiana}
+  \label{eq:lagr_duale}
   L_D &= \sum_i \alpha_i - \frac{1}{2} \sum_i \sum_j \alpha_i \,\alpha_j \,y_i \,y_j \,k(\boldsymbol{x_i}, \boldsymbol{x_j}) \\
   \langle \boldsymbol{\alpha}, \boldsymbol{y} \rangle &= 0 \\
   \alpha_i &\geq 0
@@ -348,8 +465,8 @@ per iniziare presto ad avere risultati soddifacienti con le {\smaller SVM}.
 Il parametro $C$ \`e il costo.
 Serve a rendere pi\`u laschi i vincoli dell'ottimizzazione
 \begin{equation}
+  \label{eq:vincoliC}
   0 \leq \alpha_i \leq C
-  \label{vincoliC}
 \end{equation}
 Necessario quando le due classi {\bfseries non} sono separabili,
 \`e utile quando le classi sono separabili in maniera "forzata"
@@ -357,17 +474,17 @@ cio\`e l'insieme di addestramento le mostra separabili
 ma dagli insiemi di validazione o test appare che non lo sono.
 Il parametro $\gamma$ fa riferimento alla formula del kernel a base radiale ({\smaller RBFK})
 \begin{equation}
+  \label{eq:rbfk}
   k(\boldsymbol{x_1}, \boldsymbol{x_1}) = 
     \gamma\,||\boldsymbol{x_1}-\boldsymbol{x_2}||^2
-  \label{rbfk}
 \end{equation}
 ma non \`e utilizzato nell'esempio
 perch\'e invece del kernel a base radiale
 se ne usa uno polinomiale di grado $2$.
 
 \subsection {Esempio di {\smaller SVM}}
-Nell'esempio $svmxor$
-\footnote{\, Il nome deriva dal fatto
+Nell'esempio $svmxor$ \footnote{\,
+Il nome deriva dal fatto
 che il primo problema posto alla macchina
 era uno {\smaller XOR}}
 si fanno quindi due passate con una griglia di 5 elementi,
@@ -382,7 +499,7 @@ indicativa della bont\`a del parametro $C$ usato in quel ciclo.
 
 \begin{figure}[]
  \begin{center}
- 	\includegraphics [width=\textwidth] {Figure/iris3-2015-7-14-17-11}
+ 	\includegraphics [width=\textwidth] {Figure/iris3-2015-7-14-17-11.pdf}
   \caption [Validazione incrociata] {Validazione incrociata per la ricerca del miglior parametro $C$}
   \label{fig:crossval}
  \end{center}
@@ -416,6 +533,4 @@ Si \`e usato l'insieme di dati "Iris".
 
 
 \end{document}
-
-
 

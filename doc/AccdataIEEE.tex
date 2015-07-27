@@ -6,11 +6,11 @@
 
 \usepackage{geometry} % see geometry.pdf on how to lay out the page. There's lots.
 \geometry{a4paper} % or letter or a5paper or ... etc
-% \geometry{landscape} % rotated page geometry 
+% \geometry{landscape} % rotated page geometry
 
 % See the ``Article customise'' template for come common customisations
 
-\usepackage{cite, graphicx, subfigure, amsmath} 
+\usepackage{cite, graphicx, subfigure, amsmath}
 \interdisplaylinepenalty=2500
 
 \title{Tecniche di riconoscimento e visualizzazione}
@@ -88,7 +88,7 @@ Si fa innanzitutto passare una media mobile per togliere un po' di rumore.
 Buoni risultati con un filtro lungo 13 campioni.
 Il filtro \`e applicato ``a mano'' con un ciclo $for$
 e non con l'apposito comando $signal:filter$
-perch'e contemporaneamente si esegue un sottocampionamento
+perch\'e contemporaneamente si esegue un sottocampionamento
 di fattore 3.
 Si potrebbe ovviamente fare prima il filtraggio con $filter$
 e comunque sottocampionare dopo
@@ -191,7 +191,7 @@ il percettrone calcola
 \end{equation}
 in fase di addestramento, si confronta l'uscita calcolata
 con quella desiderata: $e=d-y$
-e si correggono i pesi di un fattore $\Delta w = a e x$,
+e si correggono i pesi di un fattore $\Delta w = a\,e\,x$,
 dove $a \in [0, 1]$ \`e il fattore di apprendimento.
 Analogo per la soglia.
 
@@ -261,14 +261,16 @@ Formalmente:
 dove $\Phi(x)$ \`e una mappa -se si vuole- non lineare
 che porta i generici elementi $x$
 in uno spazio dotato di prodotto scalare.
-NB: Gli elementi originali possono quindi non essere neanche vettori.
-Oss: Praticamente si stanno estraendo le caratteristiche.
+
+NB$_{1}$: Gli elementi originali possono quindi non essere neanche vettori.\par
+NB$_{2}$: In generale \`e pi\`u semplice scrivere la funzione kernel piuttosto che la mappa.\par
+Oss: Praticamente si stanno estraendo le caratteristiche.\par
 
 \subsection{Il kernel e l'apprendimento automatico}
 Rimanendo nell'ambito della classificazione binaria
 la funzione discriminante \`e
 \begin{equation}
-\label{eq:discriminante}
+	\label{eq:discriminante}
 	y_n = sgn \left(\langle w, \Phi(x_n) \rangle + b \right)
 \end{equation}
 ma si definiscono i pesi come
@@ -323,10 +325,10 @@ Il problema \`e posto nei termini di minimizzazione della lagrangiana
 \end{equation}
 o massimizzazione della sua duale
 \begin{align}
-\label{lagrangiana}
-L_D &= \sum_i \alpha_i - \frac{1}{2} \sum_i \sum_j \alpha_i \,\alpha_j \,y_i \,y_j \,k(\boldsymbol{x_i}, \boldsymbol{x_j}) \\
+  \label{lagrangiana}
+  L_D &= \sum_i \alpha_i - \frac{1}{2} \sum_i \sum_j \alpha_i \,\alpha_j \,y_i \,y_j \,k(\boldsymbol{x_i}, \boldsymbol{x_j}) \\
   \langle \boldsymbol{\alpha}, \boldsymbol{y} \rangle &= 0 \\
-    \alpha_i &\geq 0
+  \alpha_i &\geq 0
 \end{align}
 
 \subsection{Prova di ottimizzazione}
@@ -345,20 +347,20 @@ gli eventuali vincoli lineari di uguaglianza e disuguaglianza.
 I creatori della libreria $libsvm$ danno alcuni suggerimenti
 per iniziare presto ad avere risultati soddifacienti con le {\smaller SVM}.
 \begin{itemize}
-      \item {trasformare i dati nel formato di un pacchetto svm}
-	\item {eseguire uno scalaggio semplice dei dati}
-	\item {considerare i kernel a base radiale (gaussiani)}
-    \item {crossvalidare per trovare i $C$ e $\gamma$ migliori}
-      \item {usare questi $C$ e $\gamma$ per addestrare sull'intero insieme di adestramento}
-	\item {testare}
+  \item {trasformare i dati nel formato di un pacchetto svm}
+  \item {eseguire uno scalaggio semplice dei dati}
+  \item {considerare i kernel a base radiale (gaussiani)}
+  \item {crossvalidare per trovare i $C$ e $\gamma$ migliori}
+  \item {usare questi $C$ e $\gamma$ per addestrare sull'intero insieme di adestramento}
+  \item {testare}
 \end{itemize}
 
 \paragraph {$C$ e $\gamma$}
 Il parametro $C$ \`e il costo.
 Serve a rendere pi\`u laschi i vincoli dell'ottimizzazione
 \begin{equation}
-	0 \leq \alpha_i \leq C
-	\label{vincoliC}
+  0 \leq \alpha_i \leq C
+  \label{vincoliC}
 \end{equation}
 Necessario quando le due classi {\bfseries non} sono separabili,
 \`e utile quando le classi sono separabili in maniera "forzata"
