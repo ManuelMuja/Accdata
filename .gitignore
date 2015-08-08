@@ -1,6 +1,14 @@
 .DS_Store
 .README.swp
 accdataX.swp
+doc/Accdata.bbl
+doc/Accdata.bib
+doc/Accdata.blg
+doc/Accdata.lot
+doc/natbib.bst
+doc/natbib.sty
+doc/natbib_ita.bst
+doc/plain_ita.bst
 doc/.DS_Store
 doc/Accdata.aux
 doc/Accdata.dvi
