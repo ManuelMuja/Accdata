@@ -1,4 +1,11 @@
-importazione
-% load dati
+clear all; clf; clc;
 
-plot(t, lanciotappo(:,:,1);
+%%
+%
+%
+%
+
+% importazione
+load '00importare/dati.mat';
+
+plot(t, lanciotappo(:,:,1));

@@ -53,4 +53,5 @@ printf('\n\nFINE!\n\n'); fflush(stdout);
 
 t = [1:NC]*tc;
 
-save dati
+save "dati.mat"
+cd ../01eseguire
