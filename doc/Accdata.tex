@@ -1,8 +1,8 @@
 % !TEX encoding = UTF-8 Unicode
 \documentclass [10pt,  twoside] {amsart}
 \usepackage [italian] {babel}
-\usepackage [utf8] {inputenc}
 \usepackage [T1] {fontenc}
+\usepackage [utf8] {inputenc}
 
 \usepackage{geometry} % see geometry.pdf on how to lay out the page. There's lots.
 \geometry{a4paper} % or letter or a5paper or ... etc
@@ -13,22 +13,56 @@
 \usepackage{cite, graphicx, subfigure, amsmath}
 \usepackage{tikz}
 \usepackage{sansmath}
+\usepackage{indentfirst}
 
+% Collegamenti ipertestuali
+\usepackage{xcolor}
 \usepackage{hyperref}
+\hypersetup{
+pdfauthor={Manuel Iurissevich},%
+pdftitle={Accelerometro magnetoelettrico},%
+pdfstartpage=5, pdfstartview=FitV,%
+	colorlinks,
+	linkcolor={red!0!black},
+	citecolor={green!0!black},
+	urlcolor={blue!0!black}
+}
+
+% Codice
+\usepackage{listings}
+\addto\captionsitalian{%
+\renewcommand{\lstlistingname}{Codice}}
+\addto\captionsitalian{%
+\renewcommand{\lstlistlistingname}{Elenco dei codici}}
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1}
+
+% Altri simboli
+\usepackage{cancel}
+\usepackage{cases}% http://ctan.org/pkg/cases
+\usepackage{framed}
+
+% Biliografia
+\usepackage{natbib}
 
 \title{Tecniche di riconoscimento e visualizzazione}
 %\subtitle{}
 \author{Manuel Iurissevich}
 \date{} % delete this line to display the current date
 
+
+
+
+
 %%% BEGIN DOCUMENT
 \begin{document}
 
 \maketitle
+\setcounter{tocdepth}{1}
 \tableofcontents
 \listoffigures
+\listoftables
 
-
+% \vfill\eject
 %%% ACQUISIZIONE
 
 \section{Acquisizione}
@@ -94,10 +128,10 @@ i movimenti del polso e la rotazione sull'asse dell'avambraccio.
 Fatto questo, si considera corretta l'esecuzione del movimento
 quando non c'\`e variazione dell'angolo longitudinale
 ma solo di quello latitudinale (vedi \textsc{Figura \ref{fig:biomecc}}).
-\footnote{\Huge{Terminologia!!}}
+\footnote{ Terminologia!!}
 
 Utilizzando i formalismi della robotica
-\footnote{\cite{deluca}}
+\footnote{ \cite{deluca}}
 si pu\`o scrivere la \textsc{Tabella \ref{tab:robo}}.
 Il sistema di riferimento $S_{3}$ \`e quello del telefonino.
 In realt\`a sarebbe pi\`u corretto scrivere il sistema $S_{0}$
@@ -106,12 +140,12 @@ con l'asse $z$ verso l'alto e l'asse $y$ entrante foglio
 oppure con parallelo a $S_{3}$ in posizione di riposo
 (con $x$ uscente dal foglio).
 
-Secondo questa notazione
+Secondo questa notazione:
 \begin{itemize}
 	\item [$\theta_{1}$] {$\in [0, \pi/2]$ \`e l'unico parametro che si vuole variare}
 	\item [$\theta_{2}$] {$\in [-\pi/2, \pi/2]$ dovrebbe rimanere fisso, meglio se nullo}
 	\item [$\alpha_{1}$] la rotazione attorno a $y_{1}$ \`e il principale errore da individuare
-	\item {altri parametri si considerano nulli o costanti}
+	\item [--] {altri parametri si considerano nulli o costanti}
 \end{itemize}
 
 \begin{figure}
@@ -531,6 +565,10 @@ Si \`e usato l'insieme di dati "Iris".
 
 
 
+
+
+\bibliographystyle{natbib_ita}
+\bibliography{Accdata}
 
 \end{document}
 
