@@ -1,31 +1,37 @@
-I	= 1:NC;
-tmin	= 3.5;
-tmax	= 5;
+% I	= 1:NC;
+% tmin	= 3.5;
+% tmax	= 5;
+% 
+% imin	= I(t==tmin);
+% imax	= I(t==tmax);
+% II	= imin:imax;
+% TT	= t(imin:imax);
 
-imin	= I(t==tmin);
-imax	= I(t==tmax);
-II	= imin:imax;
-TT	= t(imin:imax);
-
+d = 1
 figure(1);
 subplot(321);
-	plot(TT, lanciotappo(imin:imax,1,1));
+	plot(t, lanciotappo(:,d,1));
+	axis([t(primo(1)) t(ultimo(1)), -8 8]);
 	box off;
 	title('lancio 1');
 subplot(322);
-	plot(TT, lanciotappo(imin:imax,1,2));
+	plot(t, lanciotappo(:,d,2));
+	axis([t(primo(2)) t(ultimo(2)), -8 8]);
 	box off;
 	title('lancio 2');
 subplot(323);
-	plot(TT, lanciotappo(imin:imax,1,3));
+	plot(t, lanciotappo(:,d,3));
+	axis([t(primo(3)) t(ultimo(3)), -8 8]);
 	box off;
 	title('lancio 3');
 subplot(324);
-	plot(TT, lanciotappo(imin:imax,1,4));
+	plot(t, lanciotappo(:,d,4));
+	axis([t(primo(4)) t(ultimo(4)), -8 8]);
 	box off;
 	title('lancio 4');
 subplot(325);
-	plot(TT, lanciotappo(imin:imax,1,5));
+	plot(t, lanciotappo(:,d,5));
+	axis([t(primo(5)) t(ultimo(5)), -8 8]);
 	box off;
 	title('lancio 5');
 
@@ -45,7 +51,15 @@ subplot(223);
 
 cd ..
 figure(1);
-print -dpdf 02guardare/diseX.pdf
+switch d
+  case {1}
+    nomefile = '02guardare/diseX.pdf';
+  case {2}
+    nomefile = '02guardare/diseY.pdf';
+  case {3}
+    nomefile = '02guardare/diseZ.pdf';
+end
+print ('-dpdf', nomefile);
 
 figure(2);
 print -dpdf 02guardare/prove.pdf
